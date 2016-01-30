@@ -38,11 +38,18 @@ plan.weight         = 0.01;
 plan.sigma.Value	= 0.5;
 plan.rho.Value		= 0.5;
 
+%% Solver initialization
+plan.Verbose = 1;
+plan.MaxIter = 500;
+plan.AbsStopTol = 1e-6;
+plan.RelStopTol = 1e-6;
+
 %% Initialize the dictionary
 %D0 = zeros(plan.dictSize); % Turn on if using single precision
 D0 = rand(plan.dictSize);
 
 %% Run the CSC algorithm
-%[res] = ecsc_gpu(D0, S0, plan);
+isTrainingDictionary=1;
+[res] = ecsc_gpu(D0, S0, plan, isTrainingDictionary);
 
 
