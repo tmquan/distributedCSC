@@ -15,20 +15,31 @@ function img = dict2im(D)
     data = squeeze(data); %size(data)
     %figure; imagesc(data); axis equal off; colormap gray; drawnow;
     data = padarray(data, [0, padsize, padsize], padval, 'both');
-    %size(data)
+    % size(data)
     
-     % Force the number of filters to be square
+    % Force the number of filters to be square
     n = ceil(sqrt(dimk));
+    % for i=1:n
+    %     for j=1:n
+    %         k = sub2ind([n, n], i, j);
+    %         if k>dimk 
+    %             continue
+    %         end
+    %         C{i, j} = squeeze(data(k,:,:));
+    %     end
+    % end
+    % size(C)
+    % img = cell2mat(C);
+    img = zeros([data(2)*n, data(3)*n]);
     for i=1:n
         for j=1:n
             k = sub2ind([n, n], i, j);
             if k>dimk 
                 continue
             end
-            C{i, j} = squeeze(data(k,:,:));
+            img((13*(i-1)+1):(13*i), ...
+                (13*(j-1)+1):(13*j)) = squeeze(data(k,:,:));
         end
     end
-    %size(C);
-    img = cell2mat(C);
 
 end
