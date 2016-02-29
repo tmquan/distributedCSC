@@ -4,30 +4,26 @@ clc; clear all; close all;
 addpath(genpath('.'));
 gpuDevice(1);
 
-%% Load the image
-% img = imread('lena.png');
-% img = rgb2gray(img);
-% img = imresize(img, [128, 128]);
 
-%% Load a 3D object
-% load kiwi_128_uint8
-% % S0 = rgb2gray(imread('lena.png'));
-% % S0 = imresize(S0, [128, 128]);
-% % S0 = double(S0);
-% S0 = double(vol(:,:,end/2));
-% S0 = S0 - mean2(S0);
 
-S0 = imread('kiwi_128.png');
-% S0 = img;
-% S0 = single(S0);
+% S0 = imread('kiwi_128.png');
+S0 = imread('brain_128.png');
 S0 = im2single(S0);
-% S0 = S0-mean(vec(S0));
 
+% S0 = imreadtif('em.tif');
+% S0 = single(S0);
+% S0 = S0(:,:,1:1);
+% S0 = scale1(S0);
+
+% S0 = S0-mean(vec(S0));
+[Sl, Sh] = lowpass(S0, 0.1, 5);
+S0 = Sh;
+S0 = scale1(S0);
 %% Seed the randomness
 rng(2016);
 
 plan.elemSize = [128, 128,  1,   1];
-plan.dataSize = [128, 128,  1, 512]; % For example
+plan.dataSize = [128, 128,  1, 1]; % For example
 plan.atomSize = [ 11,  11,  1,   1];
 plan.dictSize = [ 11,  11,  1, 64];
 plan.blobSize = [128, 128,  1, 64];
@@ -44,27 +40,39 @@ plan.lambda = params;
 plan.sigma  = params; 
 plan.rho    = params; 
 
-plan.lambda.Value	= 1;
-plan.weight         = 1.0/255;
-plan.sigma.Value	= 0.5;
-plan.rho.Value		= 0.5;
+plan.lambda.Value	= 0.05; %10; 1; 0.1; 0.01; 0.001; 
+plan.weight         = 1.;
+plan.sigma.Value	= 1;
+plan.rho.Value		= 1;
 
 %% Solver initialization
 plan.Verbose = 1;
-plan.MaxIter = 100;
+plan.MaxIter = 200;
 plan.AbsStopTol = 1e-6;
 plan.RelStopTol = 1e-6;
 
 %% Initialize the dictionary
-%D0 = zeros(plan.dictSize); % Turn on if using single precision
+D0 = zeros(plan.dictSize, 'single'); % Turn on if using single precision
 D0 = rand(plan.dictSize);
-
+size(S0)
+plan.dataSize
+S0 = reshape(S0, plan.dataSize);
 %% Run the CSC algorithm
 isTrainingDictionary=1;
 [resD] = ecsc_gpu(D0, S0, plan, isTrainingDictionary);
 
-[resX] = ecsc_gpu(resD.G, S0, plan, 0);
+%%
+close all;
+%plan.lambda.Value	= 0.01;
+plan.dataSize = [128, 128,  1, 1];
+[resX] = ecsc_gpu(resD.G, S0(:,:,:,1), plan, 0);
 Slicer(squeeze(resX.Y));
 Slicer(squeeze(resX.GY));
 
 figure; imagesc(squeeze(sum(resX.GY, 4))); axis equal off; colormap gray; drawnow;
+%%
+% [s, d, y, gy, gs] = saveMaps(S0(:,:,:,1), resX.G, resX.Y, plan, 'em_single_128_', 'maps_em_single/');
+% [s, d, y, gy, gs] = saveMaps(S0(:,:,:,1), resX.G, resX.Y, plan, 'em_multi_128_', 'maps_em_multi/');
+[s, d, y, gy, gs] = saveMaps(S0(:,:,:,1), resX.G, resX.Y, plan, 'brain_128_', 'maps_brain/');
+% [s, d, y, gy, gs] = saveMaps(S0(:,:,:,1), resX.G, resX.Y, plan, 'kiwi_128_', 'maps_kiwi/');
+% [s, d, y, gy, gs] = saveMaps(S0(:,:,:,1), resX.G, resX.Y, plan, 'lena_128_', 'maps_lena/');

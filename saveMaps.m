@@ -19,9 +19,11 @@ function [s, d, y, gy, gs] = saveMaps(S, G, Y, opt, prefix, folder)
 	%dictSize = size(D); % TODO
 	blobSize = opt.blobSize;
 	dictSize = opt.dictSize;
-	numMaps = blobSize(end)
+	numMaps = blobSize(end);
     
+    G = bndcrop(G, dictSize);
     G = reshape(G, dictSize);
+    size(G)
     Y = reshape(Y, blobSize);
 	%% Save raw map S
 	% S = 255*scale1(S);
@@ -37,6 +39,8 @@ function [s, d, y, gy, gs] = saveMaps(S, G, Y, opt, prefix, folder)
 
 	%% Calculate the feature maps
 	Sf  = fft3(S);
+	size(Sf)
+	size(Gf)
 	GSf = bsxfun(@times, Gf, Sf); 
 	GS  = ifft3(GSf);
     %% Calculate the atom map
