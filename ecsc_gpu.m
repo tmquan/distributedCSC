@@ -128,7 +128,7 @@ function res = ecsc_gpu(D0, S0, plan, isTrainingDictionary)
                     % otherwise
                         % gS = gS0;
                 % end
-                figure(3); imagesc(gS); axis equal off; colormap gray; drawnow; 
+                figure(3); imagesc(gS(:,:,end/2)); axis equal off; colormap gray; drawnow; 
             end
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %% Compute the signal in DFT domain

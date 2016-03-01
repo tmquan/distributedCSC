@@ -2,12 +2,13 @@ clc; clear all; close all;
 
 %% 
 addpath(genpath('.'));
-gpuDevice(1);
+g = gpuDevice(2);
+reset(g)
 
-
-
+load kiwi_128_uint8
+S0 = vol;
 % S0 = imread('kiwi_128.png');
-S0 = imread('brain_128.png');
+% S0 = imread('brain_128.png');
 S0 = im2single(S0);
 
 % S0 = imreadtif('em.tif');
@@ -16,18 +17,18 @@ S0 = im2single(S0);
 % S0 = scale1(S0);
 
 % S0 = S0-mean(vec(S0));
-[Sl, Sh] = lowpass(S0, 0.1, 5);
-S0 = Sh;
+% [Sl, Sh] = lowpass(S0, 0.1, 5);
+% S0 = Sh;
 S0 = scale1(S0);
 %% Seed the randomness
 rng(2016);
 
-plan.elemSize = [128, 128,  1,   1];
-plan.dataSize = [128, 128,  1, 1]; % For example
-plan.atomSize = [ 11,  11,  1,   1];
-plan.dictSize = [ 11,  11,  1, 64];
-plan.blobSize = [128, 128,  1, 64];
-plan.iterSize = [128, 128,  1, 64]; 
+plan.elemSize = [128, 128,  128,  1];
+plan.dataSize = [128, 128,  128,  1]; % For example
+plan.atomSize = [ 11,  11,  11,   1];
+plan.dictSize = [ 11,  11,  11,  32];
+plan.blobSize = [128, 128,  128, 32];
+plan.iterSize = [128, 128,  128, 32]; 
 
 
 %% Initialize the plan
@@ -40,14 +41,16 @@ plan.lambda = params;
 plan.sigma  = params; 
 plan.rho    = params; 
 
-plan.lambda.Value	= 0.05; %10; 1; 0.1; 0.01; 0.001; 
-plan.weight         = 1.;
-plan.sigma.Value	= 1;
-plan.rho.Value		= 1;
+plan.lambda.Value	= .01; %10; 1; 0.1; 0.01; 0.001; 
+plan.weight         = .1;
+plan.sigma.Value	= .05;
+plan.rho.Value		= .05;
+plan.sigma.AutoScaling 	= 1;
+plan.rho.AutoScaling 	= 1;
 
 %% Solver initialization
 plan.Verbose = 1;
-plan.MaxIter = 200;
+plan.MaxIter = 1000;
 plan.AbsStopTol = 1e-6;
 plan.RelStopTol = 1e-6;
 
@@ -69,7 +72,7 @@ plan.dataSize = [128, 128,  1, 1];
 Slicer(squeeze(resX.Y));
 Slicer(squeeze(resX.GY));
 
-figure; imagesc(squeeze(sum(resX.GY, 4))); axis equal off; colormap gray; drawnow;
+%figure; imagesc(squeeze(sum(resX.GY, 4))); axis equal off; colormap gray; drawnow;
 %%
 % [s, d, y, gy, gs] = saveMaps(S0(:,:,:,1), resX.G, resX.Y, plan, 'em_single_128_', 'maps_em_single/');
 % [s, d, y, gy, gs] = saveMaps(S0(:,:,:,1), resX.G, resX.Y, plan, 'em_multi_128_', 'maps_em_multi/');
