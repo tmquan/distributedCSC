@@ -26,7 +26,7 @@ function [s, d, y, gy, gs] = saveMaps(S, G, Y, opt, prefix, folder)
     size(G)
     Y = reshape(Y, blobSize);
 	%% Save raw map S
-	% S = 255*scale1(S);
+	S = 255*scale1(abs(S));
 	imwritetif(S, [folder 'image.omap']);
 
 	%% Calculate response maps
