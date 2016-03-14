@@ -275,7 +275,8 @@ function res = ecsc_gpu(D0, S0, plan, isTrainingDictionary)
                 end
                 % Compute data fidelity term in Fourier domain (note normalisation)
                 gJdf = sum(vec(abs(sum(bsxfun(@times,gGf,gYf),4)-gSf).^2))/(2*prod(blobSize));
-                gJfn = gJdf + glambda*gJl1;
+                gJfn = gJdf + glambda*gJl1
+				k
                 % Record and display iteration details
                 tk = toc(tstart);
                 res.itstat = [res.itstat;...
@@ -307,7 +308,9 @@ function res = ecsc_gpu(D0, S0, plan, isTrainingDictionary)
             % size(D0)
             figure(5);
             % imagesc(tiledict(gD0)); axis equal off; colormap gray; drawnow;
-            imagesc(dict2im(D0)); axis equal off; colormap gray; drawnow;
+			% size(D0)
+            % imagesc(dict2im(squeeze(D0(:,:,1,:)))); axis equal off; colormap gray; drawnow;
+            imagesc(tiledict(squeeze(D0(:,:,1,:)))); axis equal off; colormap gray; drawnow;
         end % End for
         % imdisp(tiledict(squeeze(gD0))); axis equal off; colormap gray; drawnow;
         %% Update iterations
@@ -322,4 +325,5 @@ function res = ecsc_gpu(D0, S0, plan, isTrainingDictionary)
     res.G  = gather(gG);  
     res.Y  = gather(gY);  
     res.GY = gather(gGY);  
+    res.GS = gather(gGS);  
 end

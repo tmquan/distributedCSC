@@ -30,10 +30,10 @@ rng(2016);
 
 plan.elemSize = [128, 128,  128,  1];
 plan.dataSize = [128, 128,  128,  1]; % For example
-plan.atomSize = [ 11,  11,  11,   1];
-plan.dictSize = [ 11,  11,  11,  32];
-plan.blobSize = [128, 128,  128, 32];
-plan.iterSize = [128, 128,  128, 32]; 
+plan.atomSize = [  11,   11,   11,   1];
+plan.dictSize = [  11,   11,   11,  25];
+plan.blobSize = [128, 128,  128, 25];
+plan.iterSize = [128, 128,  128, 25]; 
 
 % plan.elemSize = [256, 256,  256,  1];
 % plan.dataSize = [256, 256,  256,  1]; % For example
@@ -67,7 +67,7 @@ plan.rho.AutoScaling 	= 0;
 
 %% Solver initialization
 plan.Verbose = 1;
-plan.MaxIter = 500;
+plan.MaxIter = 100;
 plan.AbsStopTol = 1e-6;
 plan.RelStopTol = 1e-6;
 
