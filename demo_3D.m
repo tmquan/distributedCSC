@@ -2,17 +2,18 @@ clc; clear all; close all;
 
 %% 
 addpath(genpath('.'));
-g = gpuDevice(1);
+g = gpuDevice(2);
 reset(g)
 
 %load kiwi_128_uint8
-% vol = imreadtif('cthead128.tif');
-% vol = imreadtif('kiwi128.tif');% vol = permute(vol, [1 3 2]);
+% vol = imreadtif('cthead128.tif'); 
+vol = imreadtif('kiwi128.tif'); vol = permute(vol, [1 3 2]);
 % vol = imreadtif('pomegranate128.tif');
-% vol = imreadtif('bonsai.tif');
-% vol = imreadtif('foot.tif');
-vol = imreadtif('zebrafish.tif');
-
+% vol = imreadtif('bonsai.tif');  vol = permute(vol, [1 3 2]);
+% vol = imreadtif('foot.tif'); vol = permute(vol, [1 3 2]); 
+% vol = imreadtif('zebrafish.tif'); vol = 255-vol;
+% vol = imreadtif('carp.tif'); vol = permute(vol, [1 3 2]);
+% vol = vol - mean(vec(vol));
 S0 = vol;
 S0 = im2single(S0);
 
@@ -58,16 +59,16 @@ plan.rho    = params;
 % plan.rho.Value		= .5;
 % plan.sigma.AutoScaling 	= 1;
 % plan.rho.AutoScaling 	= 1;
-plan.lambda.Value	= 0.01; %10; 1; 0.1; 0.01; 0.001; 
-plan.weight         	= 10;
-plan.sigma.Value		= 10;
-plan.rho.Value		= 10;
+plan.lambda.Value		= 0.01; %10; 1; 0.1; 0.01; 0.001; 
+plan.weight         	= 100;
+plan.sigma.Value		= 100;
+plan.rho.Value			= 100;
 plan.sigma.AutoScaling 	= 0;
 plan.rho.AutoScaling 	= 0;
 
 %% Solver initialization
 plan.Verbose = 1;
-plan.MaxIter = 100;
+plan.MaxIter = 500;
 plan.AbsStopTol = 1e-6;
 plan.RelStopTol = 1e-6;
 
@@ -93,8 +94,9 @@ close all;
 %figure; imagesc(squeeze(sum(resX.GY, 4))); axis equal off; colormap gray; drawnow;
 %%
 % [s, d, y, gy, gs] = saveMaps(S0, resX.G, resX.Y, plan, 'cthead128_', 'maps_cthead/');
-% [s, d, y, gy, gs] = saveMaps(S0, resX.G, resX.Y, plan, 'kiwi128_', 'maps_kiwi/');
+[s, d, y, gy, gs] = saveMaps(S0, resX.G, resX.Y, plan, 'kiwi128_', 'maps_kiwi/');
 % [s, d, y, gy, gs] = saveMaps(S0, resX.G, resX.Y, plan, 'pomegranate128_', 'maps_pomegranate/');
 % [s, d, y, gy, gs] = saveMaps(S0, resX.G, resX.Y, plan, 'bonsai_', 'maps_bonsai/');
 % [s, d, y, gy, gs] = saveMaps(S0, resX.G, resX.Y, plan, 'foot_', 'maps_foot/');
-[s, d, y, gy, gs] = saveMaps(S0, resX.G, resX.Y, plan, 'zebrafish_', 'maps_zebrafish/');
+% [s, d, y, gy, gs] = saveMaps(S0, resX.G, resX.Y, plan, 'zebrafish_', 'maps_zebrafish/');
+% [s, d, y, gy, gs] = saveMaps(S0, resX.G, resX.Y, plan, 'carp_', 'maps_carp/');

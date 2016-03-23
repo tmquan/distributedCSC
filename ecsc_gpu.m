@@ -151,9 +151,16 @@ function res = ecsc_gpu(D0, S0, plan, isTrainingDictionary)
                 gXf  = solvedbi_sm(gGf, grho, gGSf + grho*fft3(gY-gU)); 
                 gX   = ifft3(gXf); 
                 gXr  = gX; %relaxation
-
+				
+					
                 %% Solve Y subproblem
                 gY   = shrink(gXr + gU, (glambda/grho)*plan.weight); % Adjust threshold 
+				if isTrainingDictionary
+					idx = randperm(numAtoms, floor(0.2*numAtoms));
+					gY(:,:,:,idx) = 0;
+					% idx = randperm(numAtoms);
+					% gY(:,:,:,1:numAtoms) = gY(:,:,:,idx);
+				end
                 % gT   = mean(gY,4);
                 % for k=1:numAtoms
                 %     gY(:,:,:,k) = gT;
@@ -218,6 +225,8 @@ function res = ecsc_gpu(D0, S0, plan, isTrainingDictionary)
                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                     %% Solve G subproblem
                     gG   = Pcn(gDr + gH);
+					% idx = randperm(numAtoms, 2);
+					% gG(:,:,:,idx) = 0;
                     % gG =  PzpT(gG);
                    
                     % gG = abs(gG);
